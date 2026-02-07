@@ -252,12 +252,21 @@
         }
         
         async function checkLoginStatus() {
-            try {
-                const response = await fetch(API_URL + '?action=status', { 
-                    credentials: 'include',
-                    mode: 'cors'
-                });
-                const data = await response.json();
+			try {
+				// Try with credentials first
+				const response = await fetch(API_URL + '?action=status', { 
+					credentials: 'include',
+					mode: 'cors',
+					headers: {
+						'Accept': 'application/json',
+					}
+				});
+				
+				if (!response.ok) {
+					throw new Error('HTTP error! status: ' + response.status);
+				}
+				
+				const data = await response.json();
                 
                 if (data.logged_in) {
                     document.getElementById('login-section').classList.add('hidden');
